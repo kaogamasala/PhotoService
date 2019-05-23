@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>写真投稿サイト</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+	<header>
+		<div class="container">
+			<h1><a href="{% url 'app:index' %}">写真投稿サイト</a></h1>
+
+			<div class="header-menu">
+			    <a href="{% url 'app:photos_new' %}">投稿</a>
+			    {% if request.user.is_authenticated %}
+			        <a href="{% url 'app:users_detail' request.user.id %}">マイページ</a>
+			        <a href="{% url 'logout' %}">ログアウト</a>
+			    {% else %}
+			        <a href="{% url 'login' %}">ログイン</a>
+			    {% endif %}
+			</div>
+		</div>
+	</header>
+
+	<div class="container">
+		{% for message in messages %}
+			<p class="message-success">{{ message }}</p>
+		{% endfor %}
+
+		{% block content %}
+
+		<!-- photos_list.htmlを読み込んで写真一覧を表示する -->
+		{% include 'app/photos_list.html' %}
+
+		{% endblock %}
+	</div>
+</body>
+
+</html>
