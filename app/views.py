@@ -5,6 +5,8 @@ from .forms import PhotoForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login
 
 def index(request):
 	photos = Photo.objects.all().order_by('created_at')
@@ -45,3 +47,21 @@ def photos_category(request, category):
 	# 取得したCategoryに属するPhoto一覧を取得
 	photos = Photo.objects.filter(category=category).order_by('created_at')
 	return render(request, 'app/index.html', {'photos': photos, 'category': category})
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST) # ユーザーインスタンスを作成
+        if form.is_valid():
+            new_user = form.save() # ユーザーインスタンスを保存
+            input_username = form.cleaned_data['username']
+            input_password = form.cleaned_data['password1']
+            # フォームの入力値で認証できればユーザーオブジェクト、できなければNoneを返す
+            new_user = authenticate(username=input_username, password=input_password)
+            # 認証成功時のみ、ユーザーをログインさせる
+            if new_user is not None:
+                # loginメソッドは、認証ができてなくてもログインさせることができる。→上のauthenticateで認証を実行する
+                login(request, new_user)
+                return redirect('app:users_detail', pk=new_user.pk)
+    else:
+        form = UserCreationForm()
+    return render(request, 'app/signup.html', {'form': form})

@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
-    path('accounts/', include('django.contrib.auth.urls')), #ログイン用url
+    #path('accounts/', include('django.contrib.auth.urls')), #ログイン用url
 ]
 
 # MEDIA_ROOTを公開する（アクセス可能にする）
